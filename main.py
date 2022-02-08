@@ -1,4 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request
+from datetime import datetime
 from dotenv import dotenv_values
 import requests
 import json
@@ -21,11 +22,15 @@ def flightHomePage():
 
 @app.route('/flight', methods=['GET', 'POST'])
 def getFlightByNum():
+    now = datetime.now()
+    curr_date = now.strftime('%Y-%m-%d') # WIP 
+    
     url = 'http://api.aviationstack.com/v1/flights'
     search_flight_num = request.args.get('flight-number')
     params = {
         'access_key': AVIATION_STACK_API_KEY,
-        'flight_number': search_flight_num
+        'flight_number': search_flight_num,
+        'flight_date': curr_date
     }
     f = open('flightData.json') # temp read json file to avoid unecessary api req's
     data = json.load(f)
@@ -37,14 +42,17 @@ def getFlightByNum():
             'flight_date': airline['flight_date'],
             'flight_status': airline['flight_status'],
             'airline_name': airline['airline']['name'],
-            'flight_number': airline['flight']['number']
+            'flight_number': airline['flight']['number'],
+            'active_flight': airline['live'],               # if live: return lat, long else null 
+            'flight_latitude': airline['live']['latitude'],   # flights MUST be active/en-route in order to get lat, long
+            'flight_longitude': airline['live']['longitude']
         })
         
     if search_flight_num == '':
         flash('Please search for a flight using the flight number')
         return redirect('/', code=302)
     
-    return render_template('myFlight.html', airline_data = airline_data)
+    return render_template('myFlight.html', airline_data = airline_data, date = curr_date)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(24)
