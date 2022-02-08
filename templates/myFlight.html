@@ -1,2 +1,22 @@
-{% extends 'index.html' %}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ontrak - Flights</title>
+</head>
+<body>
+    <div class="my-flight" id="my-flight">
+        <!-- show active flights currently scheduled/cancelled for following day -->
+        {% for data in airline_data %}
+            {% set flight_date = data['flight_date'] %}
+            {% set flight_status = data['flight_status'] %}
+            {% set airline_name = data['airline_name'] %}
+            {% set flight_number = data['flight_number'] %}
+        <h1>{{ airline_name }} : {{ flight_number }}</h1>
+        <p>Scheduled flight date: {{ flight_date}} - {{ flight_status }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

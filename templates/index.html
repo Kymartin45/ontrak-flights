@@ -16,8 +16,8 @@
             <h1>Ontrak - Flight Tracker</h1>
             <p>Track your airline flights and view with maps</p>
             <div class="btn-container">
-                <form class="form-inline" method="GET" action="{{ url_for('getFlightData') }}">
-                    <input name="get-flight-by-id" type="search" placeholder="Search flight by number" size="25" aria-label="Search">
+                <form class="form-inline" method="get" action="{{ url_for('getFlightByNum') }}">
+                    <input name="flight-number" type="search" placeholder="Search flight by number" size="25" aria-label="Search">
                     <button class="btn btn-primary" type="submit">Search</button> 
                 </form>
             </div>
