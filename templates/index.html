@@ -16,6 +16,11 @@
             <h1>Ontrak - Flight Tracker</h1>
             <p>Track your airline flights and view with maps</p>
             <div class="btn-container">
+                {% with error = get_flashed_messages(category_filter=['error']) %}
+                    {% if error %}
+                        <p><strong>{{ error }}</strong></p>
+                    {% endif %}
+                {% endwith %}
                 <form class="form-inline" method="get" action="{{ url_for('getFlightByNum') }}">
                     <input name="flight-number" type="search" placeholder="Search flight by number" size="25" aria-label="Search">
                     <button class="btn btn-primary" type="submit">Search</button> 
