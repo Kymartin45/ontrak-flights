@@ -32,10 +32,9 @@ def getFlightByNum():
         'flight_number': search_flight_num,
         'flight_date': curr_date    # not needed in long run when searching personal flight num (param CAN be used if user wants historical flight records)
     }
-    
-    req = requests.get(url, params=params)
-    res = json.loads(req.text)
-    airlines = res['data']
+    f = open('flightData.json') # temp read json file to avoid unecessary api req's
+    data = json.load(f)
+    airlines = data['data']
     
     airline_data = []
     for airline in airlines:
@@ -46,9 +45,9 @@ def getFlightByNum():
             'departure_airport': airline['departure']['airport'],
             'arrival_airport': airline['arrival']['airport'],
             'flight_number': airline['flight']['number'],
-            'active_flight': airline['live'],                
-            'flight_latitude': airline['live']['latitude'],   # flights MUST be active/en-route in order to get lat, long
-            'flight_longitude': airline['live']['longitude']
+            'active_flight': airline['live'],               # if live: return lat, long else null 
+            # 'flight_latitude': airline['live']['latitude'],   # flights MUST be active/en-route in order to get lat, long
+            # 'flight_longitude': airline['live']['longitude']
         })
         
     if search_flight_num == '':
