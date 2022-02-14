@@ -9,32 +9,26 @@ app = Flask(__name__)
 config = dotenv_values('.env')
 
 AVIATION_STACK_API_KEY = config.get('AVIATION_STACK_API_KEY')
+GEOAPIFY_API_KEY = config.get('GEOAPIFY_API_KEY')
+
+now = datetime.now()
+curr_date = now.strftime('%Y-%m-%d')
 
 @app.route('/')
 def flightHomePage():
-    # req = requests.get(url, params=params) 
-    # res = json.loads(req.text)
-    # data = json.dumps(res, indent=4)
-    
-    # with open('flightData.json', 'w') as outfile:
-    #     outfile.write(data)
     return render_template('index.html')
 
 @app.route('/flight', methods=['GET', 'POST'])
-def getFlightByNum():
-    now = datetime.now()
-    curr_date = now.strftime('%Y-%m-%d') 
-    
+def getFlightByNum(): 
     url = 'http://api.aviationstack.com/v1/flights'
     search_flight_num = request.args.get('flight-number')
     params = {
         'access_key': AVIATION_STACK_API_KEY,
         'flight_number': search_flight_num,
-        'flight_date': curr_date    # not needed in long run when searching personal flight num (param CAN be used if user wants historical flight records)
     }
-    f = open('flightData.json') # temp read json file to avoid unecessary api req's
-    data = json.load(f)
-    airlines = data['data']
+    r = requests.get(url, params=params)
+    res = json.loads(r.text)
+    airlines = res['data']
     
     airline_data = []
     for airline in airlines:
@@ -45,9 +39,7 @@ def getFlightByNum():
             'departure_airport': airline['departure']['airport'],
             'arrival_airport': airline['arrival']['airport'],
             'flight_number': airline['flight']['number'],
-            'active_flight': airline['live'],               # if live: return lat, long else null 
-            # 'flight_latitude': airline['live']['latitude'],   # flights MUST be active/en-route in order to get lat, long
-            # 'flight_longitude': airline['live']['longitude']
+            'active_flight': airline['live']                # if live: return lat, long else null 
         })
         
     if search_flight_num == '':
@@ -55,6 +47,21 @@ def getFlightByNum():
         return redirect('/', code=302)
     
     return render_template('myFlight.html', airline_data = airline_data, date = curr_date)
+
+@app.route('/flight/', methods=['GET'])
+def renderMap():
+    url = 'https://maps.geoapify.com/v1/staticmap'
+    latitude = 28.07 # temp
+    longitude = 117.69
+    params = {
+        'apiKey': GEOAPIFY_API_KEY,
+        'style': 'klokantech-basic',
+        'zoom': '6',
+        'center': f'lonlat:{longitude},{latitude}',
+        'marker': f'lonlat:{longitude},{latitude};color:#ff0000;size:medium'
+    }
+    r = requests.get(url, params=params)    
+    return render_template('map.html', map_src=r.url)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(24)

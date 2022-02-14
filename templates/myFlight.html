@@ -11,26 +11,22 @@
         <h2>Today's Date: {{ date }}</h2>
         <!-- show active flights currently scheduled/cancelled for following day -->
         {% for data in airline_data %}
-            {% set flight_date = data['flight_date'] %}
             {% set flight_status = data['flight_status'] %}
             {% set airline_name = data['airline_name'] %}
             {% set departure_airport = data['departure_airport'] %}
             {% set arrival_airport = data['arrival_airport'] %}
             {% set flight_number = data['flight_number'] %}
             {% set active_flight = data['active_flight'] %}
-            {% set flight_latitude = data['flight_latitude'] %}
-            {% set flight_longitude = data['flight_longitude'] %}
         <h3>{{ airline_name }}: {{ flight_number }}</h3>
         <p>Departure: {{ departure_airport }}</p>
         <p>Arrival: {{ arrival_airport }}</p>
-        <p>Scheduled flight date: {{ flight_date}} - {{ flight_status }}</p>
+        <p>Flight status: {{ flight_status }}</p>
         <!-- active flights return lat, long; inactive = null -->
         {% if active_flight is not none %}
-            <p>{{ active_flight }}</p>
-            <p><strong>
-                Lat: {{ flight_latitude }}
-                Long: {{ flight_longitude }}
-            </strong></p>
+            <p>Lat: {{ active_flight['latitude'] }} Lon: {{ active_flight['longitude'] }}</p>
+            <form class="form-inline" method="get" action="{{ url_for('renderMap') }}">
+                <button class="btn btn-primary" type="submit">Show flight</button>
+            </form>
         {% else %}
             <p><strong><i>Flight is not active</i></strong></p>
         {% endif %}
