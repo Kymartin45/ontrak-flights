@@ -20,9 +20,7 @@
         <h3>{{ airline_name }}: {{ flight_number }}</h3>
         <p>Departure: {{ departure_airport }}</p>
         <p>Arrival: {{ arrival_airport }}</p>
-        <p>Flight status: {{ flight_status }}</p>
-        <!-- active flights return lat, long; inactive = null -->
-        {% if active_flight is not none %}
+        {% if ((flight_status == 'active') and (active_flight['is_ground'] == false)) %}
             <p>Lat: {{ active_flight['latitude'] }} Lon: {{ active_flight['longitude'] }}</p>
             <form class="form-inline" method="get" action="{{ url_for('renderMap') }}">
                 <button class="btn btn-primary" type="submit">Show flight</button>
