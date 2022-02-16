@@ -30,9 +30,9 @@ def getFlightByNum():
     res = json.loads(r.text)
     airlines = res['data']
     
-    airline_data = []
+    getFlightByNum.airline_data = []
     for airline in airlines:
-        airline_data.append({
+        getFlightByNum.airline_data.append({
             'flight_date': airline['flight_date'],
             'flight_status': airline['flight_status'],
             'airline_name': airline['airline']['name'],
@@ -46,7 +46,7 @@ def getFlightByNum():
         flash('Please search for a flight using the flight number', 'error')
         return redirect('/', code=302)
     
-    return render_template('myFlight.html', airline_data = airline_data, date = curr_date)
+    return render_template('myFlight.html', airline_data = getFlightByNum.airline_data, date = curr_date)
 
 @app.route('/flight/', methods=['GET'])
 def renderMap():
@@ -57,7 +57,7 @@ def renderMap():
         'zoom': '4'
     }
     r = requests.get(url, params=params)    
-    return render_template('map.html', map_src = r.url)
+    return render_template('map.html', map_src = r.url, airline_data=getFlightByNum.airline_data)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(24)
