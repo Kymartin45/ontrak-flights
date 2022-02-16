@@ -51,17 +51,13 @@ def getFlightByNum():
 @app.route('/flight/', methods=['GET'])
 def renderMap():
     url = 'https://maps.geoapify.com/v1/staticmap'
-    latitude = 28.07 # temp
-    longitude = 117.69
     params = {
         'apiKey': GEOAPIFY_API_KEY,
         'style': 'klokantech-basic',
-        'zoom': '6',
-        'center': f'lonlat:{longitude},{latitude}',
-        'marker': f'lonlat:{longitude},{latitude};color:#ff0000;size:medium'
+        'zoom': '4'
     }
     r = requests.get(url, params=params)    
-    return render_template('map.html', map_src=r.url)
+    return render_template('map.html', map_src = r.url)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(24)
